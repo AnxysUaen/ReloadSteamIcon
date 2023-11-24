@@ -94,7 +94,7 @@ func getIconFile(appId string, icon string) []byte {
 
 func scanSteamInstallation() {
 	if _, err := os.Stat(path.Join(steamInstalledFolder, "steam.exe")); err != nil {
-		fmt.Println("全盘扫描Steam安装目录：")
+		fmt.Print("自动检测Steam安装目录：")
 	}
 	diskList := getDiskList()
 	for _, disk := range diskList {
@@ -102,11 +102,12 @@ func scanSteamInstallation() {
 			if _, err := os.Stat(path.Join(disk, installFolder, "steam.exe")); err == nil {
 				steamInstalledFolder = path.Join(disk, installFolder)
 				steamIconFolder = path.Join(steamInstalledFolder, "steam/games")
+				fmt.Printf("%s\n", steamInstalledFolder)
 				return
 			}
 		}
 	}
-	fmt.Println("未检测到Steam，请手动指定Steam安装目录：")
+	fmt.Println("自动检测失败，请手动指定Steam安装目录：")
 	for {
 		steamFolder := ""
 		if _, err := fmt.Scanf("%s\n", &steamFolder); err != nil {
