@@ -163,7 +163,7 @@ func reloadSteamIcon() {
 			displayName = info.cname
 		}
 		if info.icon != "" {
-			if _, err := os.Stat(path.Join(steamIconFolder, info.icon, ".ico")); err != nil {
+			if _, err := os.Stat(path.Join(steamIconFolder, info.icon+".ico")); err != nil {
 				fmt.Printf("正在下载 %s 的图标文件... ", displayName)
 				iconFile := getIconFile(appId, info.icon)
 				file, err := os.Create(path.Join(steamIconFolder, info.icon+".ico"))
