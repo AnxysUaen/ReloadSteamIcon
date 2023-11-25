@@ -39,6 +39,12 @@ type NeedData struct {
 	cname string
 }
 
+type LibraryVdf struct {
+	Libraryfolders map[string]struct {
+		Apps map[string]string `json:"apps"`
+	} `json:"libraryfolders"`
+}
+
 func getDiskList() []string {
 	diskList := []string{}
 	for i := 67; i <= 90; i++ {
@@ -95,6 +101,9 @@ func getIconFile(appId string, icon string) []byte {
 func scanSteamInstallation() {
 	if _, err := os.Stat(path.Join(steamInstalledFolder, "steam.exe")); err != nil {
 		fmt.Print("自动检测Steam安装目录：")
+	} else {
+		fmt.Println("Test传入固定路径")
+		return
 	}
 	diskList := getDiskList()
 	for _, disk := range diskList {
@@ -125,33 +134,29 @@ func scanSteamInstallation() {
 }
 
 func scanSteamGameId() {
-	libraryVdf := path.Join(steamInstalledFolder, "steamapps/libraryfolders.vdf")
-	if _, err := os.Stat(libraryVdf); err != nil {
-		fmt.Printf("ERROR! [%s]读取失败", libraryVdf)
+	libraryVdfPath := path.Join(steamInstalledFolder, "steamapps/libraryfolders.vdf")
+	if _, err := os.Stat(libraryVdfPath); err != nil {
+		fmt.Printf("ERROR! [%s]读取失败", libraryVdfPath)
 		return
+	}
+	libraryVdfFile, err := os.Open(libraryVdfPath)
+	if err != nil {
+		fmt.Printf("ERROR! [%s]读取失败", libraryVdfPath)
+		return
+	}
+	defer libraryVdfFile.Close()
+	if vdfMap, err := vdf.NewParser(libraryVdfFile).Parse(); err != nil {
+		fmt.Printf("ERROR! 解析配置文件错误")
 	} else {
-		if file, err := os.Open(libraryVdf); err != nil {
-			fmt.Printf("ERROR! [%s]读取失败", libraryVdf)
-		} else {
-			defer file.Close()
-			if vdfMap, err := vdf.NewParser(file).Parse(); err != nil {
-				fmt.Printf("ERROR! 解析配置文件错误")
-				return
-			} else {
-				if libMap, ok := vdfMap["libraryfolders"].(map[string]interface{}); ok {
-					for _, curLibrary := range libMap {
-						curLibIDList := []string{}
-						if curLibraryMap, ok := curLibrary.(map[string]interface{}); ok {
-							if appIdMap, ok := curLibraryMap["apps"].(map[string]interface{}); ok {
-								for appKey := range appIdMap {
-									curLibIDList = append(curLibIDList, fmt.Sprintf("%v", appKey))
-								}
-								installedGameIDList = append(installedGameIDList, curLibIDList...)
-							}
-						}
-					}
-				}
+		vdfJson, _ := json.Marshal(vdfMap)
+		var vdfData LibraryVdf
+		json.Unmarshal(vdfJson, &vdfData)
+		for _, curLibrary := range vdfData.Libraryfolders {
+			curLibIDList := []string{}
+			for appKey := range curLibrary.Apps {
+				curLibIDList = append(curLibIDList, fmt.Sprintf("%v", appKey))
 			}
+			installedGameIDList = append(installedGameIDList, curLibIDList...)
 		}
 	}
 }
