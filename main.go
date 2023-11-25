@@ -191,6 +191,9 @@ func reloadSteamIcon() {
 }
 
 func main() {
+	if len(os.Args) > 1 {
+		steamInstalledFolder = os.Args[1]
+	}
 	scanSteamInstallation()
 	scanSteamGameId()
 	reloadSteamIcon()
