@@ -102,7 +102,8 @@ func scanSteamInstallation() {
 	if _, err := os.Stat(path.Join(steamInstalledFolder, "steam.exe")); err != nil {
 		fmt.Print("自动检测Steam安装目录：")
 	} else {
-		fmt.Println("Test传入固定路径")
+		fmt.Println("传入固定路径")
+		steamIconFolder = path.Join(steamInstalledFolder, "steam/games")
 		return
 	}
 	diskList := getDiskList()
