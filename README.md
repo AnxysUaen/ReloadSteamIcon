@@ -9,3 +9,6 @@
 灵感来自[steam-icon-fix](https://github.com/brotherjie-win/steam-icon-fix),但是太大了.
 
 Ps. 静态强类型语言写这种东西太智障了,不如NodeJS
+
+## TODO
+- [ ] 缓存拉取到的图标名,保存为配置文件

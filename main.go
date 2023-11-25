@@ -188,7 +188,7 @@ func reloadSteamIcon() {
 			fmt.Printf("%s 不存在图标\n", displayName)
 		}
 	}
-	fmt.Println("修复完成")
+	fmt.Print("修复完成")
 }
 
 func main() {
@@ -198,4 +198,7 @@ func main() {
 	scanSteamInstallation()
 	scanSteamGameId()
 	reloadSteamIcon()
+	fmt.Println(" 按任意键退出...")
+	exit := make([]byte, 1)
+	os.Stdin.Read(exit)
 }
